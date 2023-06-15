@@ -1,0 +1,8 @@
+{
+	"files.associations": {
+		"*.ejs": "html",
+		"joystick.h": "c",
+		"ctrl_config.h": "c",
+		"fcntl.h": "c"
+	}
+}
