@@ -8,6 +8,12 @@
 static Steering_InputState state;
 static ControllerConfig config;
 
+typedef enum {
+	HOLD,
+	RELEASE,
+	DONE
+} InitState;
+
 void log_input(int input_status) {
 	if (input_status != 0) printf("-------------------------------------\n");
 
@@ -43,10 +49,28 @@ int main() {
 	printf("Connected to controller (Baudrate: %i)\n", config.motor_baudrate);
 	Motor_Feedback feedback;
 	init_state(&state);
+	InitState input_init_state = HOLD;
 
 	while(true) {
 		int input_status = steering_check_event(js, &config, &state);
 		// log_input(input_status);
+
+		if (input_init_state != DONE) {
+			if (input_init_state == HOLD) {
+				printf("Hold down both throttle and brakes simultaneously!\n");
+
+				if (state.steering != 0 && state.brake != 0) input_init_state = RELEASE;
+			} else if (input_init_state == RELEASE) {
+				printf("Release both pedals!\n");
+
+				if (state.steering == 0 && state.brake == 0) {
+					input_init_state = DONE;
+					printf("Initialization done!");
+				}
+			}
+
+			continue;
+		}
 
 		int velocity = state.brake < config.brake_threshold ? 0 : state.throttle;
 		log_state(velocity, state.steering);
