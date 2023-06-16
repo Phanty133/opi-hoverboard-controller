@@ -64,6 +64,10 @@ void handle_axis(
 			config->axes.throttle.lin_map_min,
 			config->axes.throttle.lin_map_max
 		);
+
+		if (config->axes.throttle.reversed) {
+			state->throttle = config->axes.throttle.lin_map_max - state->throttle;
+		}
 	}
 
 	if (axis == config->axes.steering.axis_index) {
@@ -72,6 +76,10 @@ void handle_axis(
 			config->axes.steering.lin_map_min,
 			config->axes.steering.lin_map_max
 		);
+
+		if (config->axes.steering.reversed) {
+			state->steering = config->axes.steering.lin_map_max - state->steering;
+		}
 	}
 
 	if (axis == config->axes.brake.axis_index) {
@@ -80,6 +88,10 @@ void handle_axis(
 			config->axes.brake.lin_map_min,
 			config->axes.brake.lin_map_max
 		);
+
+		if (config->axes.brake.reversed) {
+			state->brake = config->axes.brake.lin_map_max - state->brake;
+		}
 	}
 
 	if (axis == config->axes.dpad_horiz.axis_index) {
@@ -88,6 +100,10 @@ void handle_axis(
 			config->axes.dpad_horiz.lin_map_min,
 			config->axes.dpad_horiz.lin_map_max
 		);
+
+		if (config->axes.dpad_horiz.reversed) {
+			state->dpad_horiz = config->axes.dpad_horiz.lin_map_max - state->dpad_horiz;
+		}
 	}
 
 	if (axis == config->axes.dpad_vert.axis_index) {
@@ -96,6 +112,10 @@ void handle_axis(
 			config->axes.dpad_vert.lin_map_min,
 			config->axes.dpad_vert.lin_map_max
 		);
+
+		if (config->axes.dpad_vert.reversed) {
+			state->dpad_vert = config->axes.dpad_vert.lin_map_max - state->dpad_vert;
+		}
 	}
 }
 

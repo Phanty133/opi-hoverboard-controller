@@ -10,31 +10,36 @@ path="/dev/input/js0"
 axis=0
 value=1
 lin_map_min=0
-lin_map_max=100
+lin_map_max=1000
+reversed=true
 
 [joymap.axis.brake]
 axis=1
 value=0
-lin_map_min=0
-lin_map_max=100
+lin_map_min=-1000
+lin_map_max=0
+reversed=true
 
 [joymap.axis.steering]
 axis=0
 value=0
-lin_map_min=-100
-lin_map_max=100
+lin_map_min=-1000
+lin_map_max=1000
+reversed=false
 
 [joymap.axis.dpad_horiz]
 axis=1
 value=1
 lin_map_min=-1
 lin_map_max=1
+reversed=false
 
 [joymap.axis.dpad_vert]
 axis=2
 value=0
 lin_map_min=-1
 lin_map_max=1
+reversed=true
 
 [joymap.buttons]
 cross=0

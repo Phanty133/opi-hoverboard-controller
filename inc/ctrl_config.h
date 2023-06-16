@@ -6,6 +6,7 @@
 
 #include <stdint.h>
 #include <string.h>
+#include <stdbool.h>
 #include <errno.h>
 #include <stdlib.h>
 #include "toml.h"
@@ -24,6 +25,9 @@ typedef struct {
 
 	/// @brief Maximum value of the joystick value's linear mapping
 	int lin_map_max;
+
+	/// @brief If true, output is lin_map_max - mapped(value)
+	bool reversed;
 } Config_Axis;
 
 /// @brief Maps joystick axes to event axes indices

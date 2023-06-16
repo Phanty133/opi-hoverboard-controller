@@ -6,6 +6,7 @@ void read_axis(Config_Axis* config_axis, toml_table_t* axis_table, const char* a
 	config_axis->value_index = toml_int_in(throttle, "value").u.b;
 	config_axis->lin_map_min = toml_int_in(throttle, "lin_map_min").u.b;
 	config_axis->lin_map_max = toml_int_in(throttle, "lin_map_max").u.b;
+	config_axis->reversed = toml_int_in(throttle, "reversed").u.b;
 }
 
 int config_load(const char* config_path, ControllerConfig* config) {
