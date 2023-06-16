@@ -74,7 +74,14 @@ int linmap_axis(short axis_value, int min, int max) {
 
 int qbezier_axis(int axis_value, Config_Axis* axis) {
 	float map_range = axis->lin_map_max - axis->lin_map_min;
-	float t = (axis_value - axis->lin_map_min) / map_range;
+	int val = axis_value;
+
+	if (axis->lin_map_min < 0 && axis->lin_map_max > 0) {
+		map_range = axis_value < 0 ? -axis->lin_map_min : axis->lin_map_max;
+		val = val < 0 ? -val : val;
+	}
+
+	float t = val / map_range;
 	float inv_t = 1 - t;
 	float p0x = 0;
 	float p0y = 0;
@@ -86,7 +93,11 @@ int qbezier_axis(int axis_value, Config_Axis* axis) {
 	// Out = P1 + (1 - t)^2(P0 - P1) + t^2(P2 - P1)
 	// float out_x = p1x + inv_t * inv_t * (p0x - p1x) + t * t * (p2x - p1x);
 	float out_bezier_y = p1y + inv_t * inv_t * (p0y - p1y) + t * t * (p2y - p1y);
-	float out_y = out_bezier_y * map_range + axis->lin_map_min;
+	float out_y = out_bezier_y * map_range;
+
+	if (axis->lin_map_min < 0 && axis->lin_map_max > 0 && val < 0) {
+		out_y = -out_y;
+	}
 
 	return out_y;
 }
