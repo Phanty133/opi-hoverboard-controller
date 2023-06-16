@@ -2,11 +2,12 @@
 
 # I couldn't be bothered to write a makefile
 
-gcc -Iinc -o opi-controller.out \
-	src/main.c \
+gcc -Iinc -c -o build/toml.o src/toml.c
+g++ -Iinc -o opi-controller.out \
+	build/toml.o \
+	src/logger.c \
 	src/motor.c \
 	src/joystick.c \
 	src/steering.c \
-	src/toml.c \
 	src/ctrl_config.c \
-	src/logger.c
+	src/main.cpp

@@ -69,4 +69,5 @@ int config_load(const char* config_path, ControllerConfig* config) {
 	free(motor_serial_port.u.s);
 
 	toml_free(conf);
+	return 0;
 }

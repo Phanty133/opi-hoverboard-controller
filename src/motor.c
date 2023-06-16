@@ -39,6 +39,8 @@ int motor_init(int serial_port_fd, int baudrate) {
 		log_error("tcsetattr failed");
 		return -1;
 	}
+
+	return 0;
 }
 
 void motor_send_command(int serial_port_fd, int16_t steer, int16_t speed) {
