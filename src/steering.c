@@ -95,7 +95,7 @@ int qbezier_axis(int axis_value, Config_Axis* axis) {
 	float out_bezier_y = p1y + inv_t * inv_t * (p0y - p1y) + t * t * (p2y - p1y);
 	float out_y = out_bezier_y * map_range;
 
-	if (axis->lin_map_min < 0 && axis->lin_map_max > 0 && val < 0) {
+	if (axis->lin_map_min < 0 && axis->lin_map_max > 0 && axis_value < 0) {
 		out_y = -out_y;
 	}
 
