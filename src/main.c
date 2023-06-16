@@ -50,6 +50,7 @@ int main() {
 	Motor_Feedback feedback;
 	init_state(&state);
 	InitState input_init_state = HOLD;
+	bool logged_init_info = false;
 
 	while(true) {
 		int input_status = steering_check_event(js, &config, &state);
@@ -57,15 +58,24 @@ int main() {
 
 		if (input_init_state != DONE) {
 			if (input_init_state == HOLD) {
-				printf("Hold down both throttle and brakes simultaneously!\n");
+				if (!logged_init_info) {
+					printf("Hold down both throttle and brakes simultaneously!\n");
+					logged_init_info = true;
+				}
 
-				if (state.steering != 0 && state.brake != 0) input_init_state = RELEASE;
+				if (state.steering != 0 && state.brake != 0) {
+					input_init_state = RELEASE;
+					logged_init_info = false;
+				}
 			} else if (input_init_state == RELEASE) {
-				printf("Release both pedals!\n");
+				if (!logged_init_info) {
+					printf("Release both pedals!\n");
+					logged_init_info = true;
+				}
 
 				if (state.steering == 0 && state.brake == 0) {
 					input_init_state = DONE;
-					printf("Initialization done!");
+					printf("Initialization done!\n");
 				}
 			}
 
