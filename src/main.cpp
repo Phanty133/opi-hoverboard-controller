@@ -56,8 +56,9 @@ unsigned long long get_cur_millis() {
 	return millis;
 }
 
-void fork_input_read(int js_fd, ControllerConfig config) {
+void fork_input_read(ControllerConfig config) {
 	bool logged_init_info = false;
+	int js_fd = open(config.joy_path, O_RDONLY);
 	ProgState cur_prog_state;
 
 	while (true) {
@@ -99,9 +100,17 @@ void fork_input_read(int js_fd, ControllerConfig config) {
 	}
 }
 
-void fork_send_cmd(int motor_fd, ControllerConfig config) {
+void fork_send_cmd(ControllerConfig config) {
 	int refresh_millis = 100;
 	int refresh_start = 0;
+	int motor_fd = open(config.motor_port, O_RDWR);
+
+	if (motor_init(motor_fd, config.motor_baudrate) == -1) {
+		log_error("Failed to initialize motor serial port!");
+		return;
+	}
+
+	printf("Connected to controller (Baudrate: %i)\n", config.motor_baudrate);
 
 	ProgState cur_prog_state;
 	printf("Brake threshold: %i\n", config.brake_threshold);
@@ -131,21 +140,12 @@ void fork_send_cmd(int motor_fd, ControllerConfig config) {
 int main() {
 	ControllerConfig config;
 	config_load("ctrlconfig.toml", &config);
-
-	int js = open(config.joy_path, O_RDONLY);
-	int motor = open(config.motor_port, O_RDWR);
 	
-	if (motor_init(motor, config.motor_baudrate) == -1) {
-		log_error("Failed to initialize motor serial port!");
-		return 0;
-	}
-
-	printf("Connected to controller (Baudrate: %i)\n", config.motor_baudrate);
 	Motor_Feedback feedback;
 	// init_state(&state);
 
-	std::thread inputThread(fork_input_read, js, config);
-	std::thread cmdThread(fork_send_cmd, motor, config);
+	std::thread inputThread(fork_input_read, config);
+	std::thread cmdThread(fork_send_cmd, config);
 
 	inputThread.join();
 	cmdThread.join();
