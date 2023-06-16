@@ -104,6 +104,7 @@ void fork_send_cmd(int motor_fd, ControllerConfig config) {
 	int refresh_start = 0;
 
 	ProgState cur_prog_state;
+	printf("Brake threshold: %i\n", config.brake_threshold);
 
 	while (true) {
 		{

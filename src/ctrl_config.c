@@ -33,6 +33,8 @@ int config_load(const char* config_path, ControllerConfig* config) {
 	}
 
 	toml_table_t* joystick_table = toml_table_in(conf, "joystick");
+	config->brake_threshold = toml_int_in(joystick_table, "brake_threshold").u.b;
+
 	toml_datum_t joy_path = toml_string_in(joystick_table, "path");
 	strcpy(config->joy_path, joy_path.u.s);
 	free(joy_path.u.s);
