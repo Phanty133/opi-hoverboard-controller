@@ -68,8 +68,6 @@ void fork_input_read(int js_fd, ControllerConfig config) {
 
 		int input_status = steering_check_event(js_fd, &config, &cur_prog_state.state);
 
-		log_input(input_status, &cur_prog_state.state);
-
 		if (cur_prog_state.input_init_state != DONE) {
 			if (cur_prog_state.input_init_state == HOLD) {
 				if (!logged_init_info) {
