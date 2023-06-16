@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <fcntl.h>
+#include <time.h>
 #include "ctrl_config.h"
 #include "steering.h"
 #include "motor.h"
@@ -35,6 +36,18 @@ void log_state(int velocity, int steering) {
 	printf("Steering: %i\n", steering);
 }
 
+unsigned long long get_cur_millis() {
+	struct timeval tv;
+
+	gettimeofday(&tv, NULL);
+
+	unsigned long long millis =
+		(unsigned long long)(tv.tv_sec) * 1000 +
+		(unsigned long long)(tv.tv_usec) / 1000;
+
+	return millis;
+}
+
 int main() {
 	config_load("ctrlconfig.toml", &config);
 
@@ -51,6 +64,9 @@ int main() {
 	init_state(&state);
 	InitState input_init_state = HOLD;
 	bool logged_init_info = false;
+
+	int refresh_millis = 100;
+	int refresh_start = 0;
 
 	while(true) {
 		int input_status = steering_check_event(js, &config, &state);
@@ -82,9 +98,16 @@ int main() {
 			continue;
 		}
 
-		int velocity = state.brake < config.brake_threshold ? 0 : state.throttle;
-		log_state(velocity, state.steering);
-		motor_send_command(motor, state.steering, velocity);
+		if (
+			get_cur_millis() - refresh_start > refresh_millis
+			|| input_status > 0
+		) {
+			int velocity = state.brake < config.brake_threshold ? 0 : state.throttle;
+			log_state(velocity, state.steering);
+			motor_send_command(motor, state.steering, velocity);
+
+			refresh_start = get_cur_millis();
+		}
 
 		if (motor_receive(motor, &feedback)) {
 			printf("Received motor data:\n");
