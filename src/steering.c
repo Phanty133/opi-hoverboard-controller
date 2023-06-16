@@ -63,7 +63,7 @@ int qbezier_axis(int axis_value, Config_Axis* axis) {
 	// Out = P1 + (1 - t)^2(P0 - P1) + t^2(P2 - P1)
 	// float out_x = p0x + inv_t * inv_t * (p0x - p1x) + t * t * (p2x - p1x);
 	float out_bezier_y = p0y + inv_t * inv_t * (p0y - p1y) + t * t * (p2y - p1y);
-	float out_y = out_bezier_y * map_range;
+	float out_y = out_bezier_y * map_range - axis->lin_map_min;
 
 	return out_y;
 }
@@ -84,12 +84,12 @@ void handle_axis(
 			config->axes.throttle.lin_map_max
 		);
 
-		if (config->axes.throttle.curved) {
-			state->throttle = qbezier_axis(state->throttle, &config->axes.throttle);
-		}
-
 		if (config->axes.throttle.reversed) {
 			state->throttle = config->axes.throttle.lin_map_max - state->throttle;
+		}
+
+		if (config->axes.throttle.curved) {
+			state->throttle = qbezier_axis(state->throttle, &config->axes.throttle);
 		}
 	}
 
@@ -100,12 +100,12 @@ void handle_axis(
 			config->axes.steering.lin_map_max
 		);
 
-		if (config->axes.steering.curved) {
-			state->steering = qbezier_axis(state->steering, &config->axes.steering);
-		}
-
 		if (config->axes.steering.reversed) {
 			state->steering = config->axes.steering.lin_map_max - state->steering;
+		}
+
+		if (config->axes.steering.curved) {
+			state->steering = qbezier_axis(state->steering, &config->axes.steering);
 		}
 	}
 
@@ -116,12 +116,12 @@ void handle_axis(
 			config->axes.brake.lin_map_max
 		);
 
-		if (config->axes.brake.curved) {
-			state->brake = qbezier_axis(state->brake, &config->axes.brake);
-		}
-
 		if (config->axes.brake.reversed) {
 			state->brake = config->axes.brake.lin_map_max - state->brake;
+		}
+
+		if (config->axes.brake.curved) {
+			state->brake = qbezier_axis(state->brake, &config->axes.brake);
 		}
 	}
 
