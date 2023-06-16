@@ -23,6 +23,12 @@ void log_input(int input_status) {
 	}
 }
 
+void log_state(int velocity, int steering) {
+	printf("-------------------------\n");
+	printf("Target velocity: %i\n", velocity);
+	printf("Steering: %i\n", steering);
+}
+
 int main() {
 	config_load("ctrlconfig.toml", &config);
 
@@ -40,9 +46,10 @@ int main() {
 
 	while(true) {
 		int input_status = steering_check_event(js, &config, &state);
-		log_input(input_status);
+		// log_input(input_status);
 
 		int velocity = state.brake < config.brake_threshold ? 0 : state.throttle;
+		log_state(velocity, state.steering);
 		motor_send_command(motor, state.steering, velocity);
 
 		if (motor_receive(motor, &feedback)) {
