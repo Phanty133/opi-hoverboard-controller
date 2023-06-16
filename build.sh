@@ -4,7 +4,7 @@
 
 mkdir build
 gcc -Iinc -c -o build/toml.o src/toml.c
-g++ -Iinc -latomic -std=c++14 -o opi-controller.out \
+g++ -Iinc -pthread -std=c++14 -o opi-controller.out \
 	build/toml.o \
 	src/logger.c \
 	src/motor.c \
