@@ -63,7 +63,7 @@ int main() {
 					logged_init_info = true;
 				}
 
-				if (state.steering != 0 && state.brake != 0) {
+				if (state.throttle != 0 && state.brake != 0) {
 					input_init_state = RELEASE;
 					logged_init_info = false;
 				}
@@ -73,7 +73,7 @@ int main() {
 					logged_init_info = true;
 				}
 
-				if (state.steering == 0 && state.brake == 0) {
+				if (state.throttle == 0 && state.brake == 0) {
 					input_init_state = DONE;
 					printf("Initialization done!\n");
 				}
