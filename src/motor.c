@@ -40,3 +40,67 @@ int motor_init(int serial_port_fd, int baudrate) {
 		return -1;
 	}
 }
+
+void motor_send_command(int serial_port_fd, int16_t steer, int16_t speed) {
+	Motor_Command command;
+
+	command.start    = (uint16_t)MOTOR_START_FRAME;
+	command.steer    = (int16_t)steer;
+	command.speed    = (int16_t)speed;
+	command.checksum = (uint16_t)(command.start ^ command.steer ^ command.speed);
+
+	write(serial_port_fd, (uint8_t*)&command, sizeof(command));
+}
+
+bool motor_receive(int serial_port_fd, Motor_Feedback* feedback) {
+	static uint8_t incoming_byte_prev;
+	static uint16_t buf_start_frame;
+	static uint8_t data_index;
+	int available;
+
+	if (ioctl(serial_port_fd, FIONREAD, &available ) < 0 ) {
+		log_error("Failed to get motor port available data");
+		return false;
+	}
+
+	if (available == 0) return false;
+
+	bool data_valid = false;
+	bool start_frame_loaded = false;
+
+	while (available-- > 0) {
+		uint8_t incoming_byte;
+	
+		if (read(serial_port_fd, &incoming_byte, 1) == -1) {
+			log_error("Failed to read motor serial port");
+		}
+
+		buf_start_frame = ((uint16_t)(incoming_byte) << 8) | incoming_byte_prev;
+
+		if (start_frame_loaded) {
+			((uint8_t*)feedback)[data_index++] = incoming_byte;
+
+			if (data_index == sizeof(Motor_Feedback)) {
+				data_valid = true;
+				break;
+			}
+		} else if (buf_start_frame == MOTOR_START_FRAME) {
+			data_index = 2;
+			start_frame_loaded = true;
+		}
+	}
+
+	if (data_valid) {
+		uint16_t checksum = (uint16_t)(
+			feedback->start ^ feedback->cmd1 ^ feedback->cmd2
+			^ feedback->speedR_meas ^ feedback->speedL_meas
+			^ feedback->batVoltage ^ feedback->boardTemp ^ feedback->cmdLed
+		);
+
+		if (!(feedback->start == MOTOR_START_FRAME && feedback->checksum == checksum)) {
+			data_valid = false;
+		}
+	}
+
+	return data_valid;
+}
