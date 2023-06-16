@@ -19,11 +19,13 @@ int main() {
 		return 0;
 	}
 
+	Motor_Feedback feedback;
+	motor_send_command(motor, 0, 100);
+
 	while(true) {
 		int input_status = steering_check_event(js, &config, &state);
 
 		if (input_status == -1) break;
-		
 		if (input_status != 0) printf("-------------------------------------\n");
 
 		if (input_status == 1) {
@@ -35,6 +37,13 @@ int main() {
 			printf("Brake state: %i\n", state.brake);
 			printf("DPad-L/R: %i\n", state.dpad_horiz);
 			printf("DPad-D/U: %i\n", state.dpad_vert);
+		}
+
+		if (motor_receive(motor, &feedback)) {
+			printf("Received motor data:\n");
+			printf("SpeedR: %i\nSpeedL: %i\nBatVoltage: %i\n",
+				feedback.speedR_meas, feedback.speedL_meas, feedback.batVoltage
+			);
 		}
 	}
 
