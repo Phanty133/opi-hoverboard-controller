@@ -36,6 +36,7 @@ int main() {
 
 	printf("Connected to controller (Baudrate: %i)\n", config.motor_baudrate);
 	Motor_Feedback feedback;
+	init_state(&state);
 
 	while(true) {
 		int input_status = steering_check_event(js, &config, &state);

@@ -1,5 +1,28 @@
 #include "steering.h"
 
+void init_state(Steering_InputState* state) {
+	state->steering = 0;
+	state->brake = 0;
+	state->throttle = 0;
+	state->dpad_horiz = 0;
+	state->dpad_vert = 0;
+
+	state->cross = 0;
+	state->square = 0;
+	state->circle = 0;
+	state->triangle = 0;
+	state->paddle_right = 0;
+	state->paddle_left = 0;
+	state->r2 = 0;
+	state->l2 = 0;
+	state->select = 0;
+	state->start = 0;
+	state->r3 = 0;
+	state->l3 = 0;
+	state->shift_down = 0;
+	state->shift_up = 0;
+}
+
 void handle_button(
 	ControllerConfig* config,
 	Steering_InputState* state,
@@ -73,7 +96,7 @@ void handle_axis(
 	Steering_InputState* state,
 	struct js_event* ev
 ) {
-	static JoyAxisState axes[3];
+	static JoyAxisState axes[3] = {0};
 	int axis = joy_get_axis_state(ev, axes);
 
 	// Honestly, this is even worse than the button function

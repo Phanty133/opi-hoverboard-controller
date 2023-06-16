@@ -34,6 +34,8 @@ typedef struct {
 	bool shift_up;
 } Steering_InputState;
 
+void init_state(Steering_InputState* state);
+
 int steering_check_event(
 	int input_fd,
 	ControllerConfig* config,
