@@ -92,13 +92,6 @@ void fork_input_read(int js_fd, ControllerConfig config) {
 					printf("Initialization done!\n");
 				}
 			}
-
-			{
-				std::lock_guard<std::mutex> lock(state_mutex);
-				prog_state.input_init_state = cur_prog_state.input_init_state;
-			}
-
-			continue;
 		}
 
 		{
