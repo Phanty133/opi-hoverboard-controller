@@ -34,6 +34,7 @@ int main() {
 		return 0;
 	}
 
+	printf("Connected to controller (Baudrate: %i)\n", config.motor_baudrate);
 	Motor_Feedback feedback;
 
 	while(true) {
