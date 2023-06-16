@@ -39,7 +39,7 @@ void handle_button(
 	}
 }
 
-int map_axis_value(short axis_value, int min, int max) {
+int linmap_axis(short axis_value, int min, int max) {
 	int axis_int = (int)axis_value;
 	int axis_min = -32767;
 	int axis_max = 32767;
@@ -49,21 +49,44 @@ int map_axis_value(short axis_value, int min, int max) {
 	return mapped;
 }
 
+int qbezier_axis(int axis_value, Config_Axis* axis) {
+	float map_range = axis->lin_map_max - axis->lin_map_min;
+	float t = (axis_value - axis->lin_map_min) / map_range;
+	float inv_t = 1 - t;
+	float p0x = 0;
+	float p0y = 0;
+	float p1x = axis->qbezier_x;
+	float p1y = axis->qbezier_y;
+	float p2x = 1;
+	float p2y = 1;
+
+	// Out = P1 + (1 - t)^2(P0 - P1) + t^2(P2 - P1)
+	// float out_x = p0x + inv_t * inv_t * (p0x - p1x) + t * t * (p2x - p1x);
+	float out_bezier_y = p0y + inv_t * inv_t * (p0y - p1y) + t * t * (p2y - p1y);
+	float out_y = out_bezier_y * map_range;
+
+	return out_y;
+}
+
 void handle_axis(
 	ControllerConfig* config,
 	Steering_InputState* state,
 	struct js_event* ev
 ) {
-	JoyAxisState axes[3];
+	static JoyAxisState axes[3];
 	int axis = joy_get_axis_state(ev, axes);
 
 	// Honestly, this is even worse than the button function
 	if (axis == config->axes.throttle.axis_index) {
-		state->throttle = map_axis_value(
+		state->throttle = linmap_axis(
 			config->axes.throttle.value_index ? axes[axis].y : axes[axis].x,
 			config->axes.throttle.lin_map_min,
 			config->axes.throttle.lin_map_max
 		);
+
+		if (config->axes.throttle.curved) {
+			state->throttle = qbezier_axis(state->throttle, &config->axes.throttle);
+		}
 
 		if (config->axes.throttle.reversed) {
 			state->throttle = config->axes.throttle.lin_map_max - state->throttle;
@@ -71,11 +94,15 @@ void handle_axis(
 	}
 
 	if (axis == config->axes.steering.axis_index) {
-		state->steering = map_axis_value(
+		state->steering = linmap_axis(
 			config->axes.steering.value_index ? axes[axis].y : axes[axis].x,
 			config->axes.steering.lin_map_min,
 			config->axes.steering.lin_map_max
 		);
+
+		if (config->axes.steering.curved) {
+			state->steering = qbezier_axis(state->steering, &config->axes.steering);
+		}
 
 		if (config->axes.steering.reversed) {
 			state->steering = config->axes.steering.lin_map_max - state->steering;
@@ -83,11 +110,15 @@ void handle_axis(
 	}
 
 	if (axis == config->axes.brake.axis_index) {
-		state->brake = map_axis_value(
+		state->brake = linmap_axis(
 			config->axes.brake.value_index ? axes[axis].y : axes[axis].x,
 			config->axes.brake.lin_map_min,
 			config->axes.brake.lin_map_max
 		);
+
+		if (config->axes.brake.curved) {
+			state->brake = qbezier_axis(state->brake, &config->axes.brake);
+		}
 
 		if (config->axes.brake.reversed) {
 			state->brake = config->axes.brake.lin_map_max - state->brake;
@@ -95,7 +126,7 @@ void handle_axis(
 	}
 
 	if (axis == config->axes.dpad_horiz.axis_index) {
-		state->dpad_horiz = map_axis_value(
+		state->dpad_horiz = linmap_axis(
 			config->axes.dpad_horiz.value_index ? axes[axis].y : axes[axis].x,
 			config->axes.dpad_horiz.lin_map_min,
 			config->axes.dpad_horiz.lin_map_max
@@ -107,7 +138,7 @@ void handle_axis(
 	}
 
 	if (axis == config->axes.dpad_vert.axis_index) {
-		state->dpad_vert = map_axis_value(
+		state->dpad_vert = linmap_axis(
 			config->axes.dpad_vert.value_index ? axes[axis].y : axes[axis].x,
 			config->axes.dpad_vert.lin_map_min,
 			config->axes.dpad_vert.lin_map_max

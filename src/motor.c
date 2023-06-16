@@ -49,7 +49,7 @@ void motor_send_command(int serial_port_fd, int16_t steer, int16_t speed) {
 	command.speed    = (int16_t)speed;
 	command.checksum = (uint16_t)(command.start ^ command.steer ^ command.speed);
 
-	unsigned const char data[] = "\xcd\xab\x00\x00\x64\x00\xa9\xab";
+	// unsigned const char data[] = "\xcd\xab\x00\x00\x64\x00\xa9\xab";
 	write(serial_port_fd, (uint8_t*)&command, sizeof(command));
 	tcdrain(serial_port_fd);
 }

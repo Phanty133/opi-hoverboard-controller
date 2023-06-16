@@ -28,6 +28,10 @@ typedef struct {
 
 	/// @brief If true, output is lin_map_max - mapped(value)
 	bool reversed;
+
+	bool curved;
+	float qbezier_x;
+	float qbezier_y;
 } Config_Axis;
 
 /// @brief Maps joystick axes to event axes indices
@@ -72,6 +76,8 @@ typedef struct {
 	char motor_port[32];
 
 	unsigned int motor_baudrate;
+
+	int brake_threshold;
 } ControllerConfig;
 
 /// @brief Loads and parses config file

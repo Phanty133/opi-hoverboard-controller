@@ -4,6 +4,7 @@ baudrate=115200
 
 [joystick]
 path="/dev/input/js0"
+brake_threshold=-5
 
 [joymap]
 [joymap.axis.throttle]
@@ -12,13 +13,17 @@ value=1
 lin_map_min=0
 lin_map_max=1000
 reversed=true
+curved=true
+qbezier_x=0.5
+qbezier_y=1
 
 [joymap.axis.brake]
 axis=1
 value=0
-lin_map_min=-1000
+lin_map_min=-10
 lin_map_max=0
 reversed=true
+curved=false
 
 [joymap.axis.steering]
 axis=0
@@ -26,6 +31,9 @@ value=0
 lin_map_min=-1000
 lin_map_max=1000
 reversed=false
+curved=true
+qbezier_x=0.25
+qbezier_y=1
 
 [joymap.axis.dpad_horiz]
 axis=1
@@ -33,6 +41,7 @@ value=1
 lin_map_min=-1
 lin_map_max=1
 reversed=false
+curved=false
 
 [joymap.axis.dpad_vert]
 axis=2
@@ -40,6 +49,7 @@ value=0
 lin_map_min=-1
 lin_map_max=1
 reversed=true
+curved=false
 
 [joymap.buttons]
 cross=0

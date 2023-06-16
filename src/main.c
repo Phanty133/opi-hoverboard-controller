@@ -8,6 +8,21 @@
 static Steering_InputState state;
 static ControllerConfig config;
 
+void log_input(int input_status) {
+	if (input_status != 0) printf("-------------------------------------\n");
+
+	if (input_status == 1) {
+		printf("Paddle left: %i\n", state.paddle_left);
+		printf("Paddle right: %i\n", state.paddle_right);
+	} else if (input_status == 2) {
+		printf("Steering state: %i\n", state.steering);
+		printf("Throttle state: %i\n", state.throttle);
+		printf("Brake state: %i\n", state.brake);
+		printf("DPad-L/R: %i\n", state.dpad_horiz);
+		printf("DPad-D/U: %i\n", state.dpad_vert);
+	}
+}
+
 int main() {
 	config_load("ctrlconfig.toml", &config);
 
@@ -23,22 +38,10 @@ int main() {
 
 	while(true) {
 		int input_status = steering_check_event(js, &config, &state);
+		log_input(input_status);
 
-		if (input_status == -1) break;
-		// if (input_status != 0) printf("-------------------------------------\n");
-
-		// if (input_status == 1) {
-		// 	printf("Paddle left: %i\n", state.paddle_left);
-		// 	printf("Paddle right: %i\n", state.paddle_right);
-		// } else if (input_status == 2) {
-		// 	printf("Steering state: %i\n", state.steering);
-		// 	printf("Throttle state: %i\n", state.throttle);
-		// 	printf("Brake state: %i\n", state.brake);
-		// 	printf("DPad-L/R: %i\n", state.dpad_horiz);
-		// 	printf("DPad-D/U: %i\n", state.dpad_vert);
-		// }
-
-		motor_send_command(motor, state.steering, state.throttle);
+		int velocity = state.brake < config.brake_threshold ? 0 : state.throttle;
+		motor_send_command(motor, state.steering, velocity);
 
 		if (motor_receive(motor, &feedback)) {
 			printf("Received motor data:\n");

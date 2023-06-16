@@ -1,12 +1,18 @@
 #include "ctrl_config.h"
 
 void read_axis(Config_Axis* config_axis, toml_table_t* axis_table, const char* axis_name) {
-	toml_table_t* throttle = toml_table_in(axis_table, axis_name);
-	config_axis->axis_index = toml_int_in(throttle, "axis").u.b;
-	config_axis->value_index = toml_int_in(throttle, "value").u.b;
-	config_axis->lin_map_min = toml_int_in(throttle, "lin_map_min").u.b;
-	config_axis->lin_map_max = toml_int_in(throttle, "lin_map_max").u.b;
-	config_axis->reversed = toml_int_in(throttle, "reversed").u.b;
+	toml_table_t* axis = toml_table_in(axis_table, axis_name);
+	config_axis->axis_index = toml_int_in(axis, "axis").u.b;
+	config_axis->value_index = toml_int_in(axis, "value").u.b;
+	config_axis->lin_map_min = toml_int_in(axis, "lin_map_min").u.b;
+	config_axis->lin_map_max = toml_int_in(axis, "lin_map_max").u.b;
+	config_axis->reversed = toml_bool_in(axis, "reversed").u.b;
+	config_axis->curved = toml_bool_in(axis, "curved").u.b;
+
+	if (config_axis->curved) {
+		config_axis->qbezier_x = toml_double_in(axis, "qbezier_x").u.d;
+		config_axis->qbezier_y = toml_double_in(axis, "qbezier_y").u.d;
+	}
 }
 
 int config_load(const char* config_path, ControllerConfig* config) {
