@@ -58,16 +58,17 @@ unsigned long long get_cur_millis() {
 
 void fork_input_read(int js_fd, ControllerConfig config) {
 	bool logged_init_info = false;
+	ProgState cur_prog_state;
 
 	while (true) {
-		ProgState cur_prog_state;
-
 		{
 			std::lock_guard<std::mutex> lock(state_mutex);
 			cur_prog_state = prog_state;
 		}
 
 		int input_status = steering_check_event(js_fd, &config, &cur_prog_state.state);
+
+		log_input(input_status, &cur_prog_state.state);
 
 		if (cur_prog_state.input_init_state != DONE) {
 			if (cur_prog_state.input_init_state == HOLD) {
@@ -102,8 +103,7 @@ void fork_input_read(int js_fd, ControllerConfig config) {
 
 		{
 			std::lock_guard<std::mutex> lock(state_mutex);
-			prog_state.state = cur_prog_state.state;
-			prog_state.last_input_status = input_status;
+			prog_state = cur_prog_state;
 		}
 	}
 }
