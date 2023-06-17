@@ -129,6 +129,12 @@ void fork_send_cmd(ControllerConfig config) {
 		) {
 			int velocity = cur_prog_state.state.brake < config.brake_threshold
 				? 0 : cur_prog_state.state.throttle;
+
+			if (cur_prog_state.state.paddle_right) {
+				// Set reverse
+				velocity = -velocity;
+			}
+
 			log_state(velocity, cur_prog_state.state.steering);
 			motor_send_command(motor_fd, cur_prog_state.state.steering, velocity);
 
