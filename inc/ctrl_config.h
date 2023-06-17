@@ -78,6 +78,8 @@ typedef struct {
 	unsigned int motor_baudrate;
 
 	int brake_threshold;
+
+	int reverse_speed_cap;
 } ControllerConfig;
 
 /// @brief Loads and parses config file

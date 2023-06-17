@@ -132,7 +132,7 @@ void fork_send_cmd(ControllerConfig config) {
 
 			if (cur_prog_state.state.paddle_right) {
 				// Set reverse
-				velocity = -velocity;
+				velocity = -(velocity > config.reverse_speed_cap ? config.reverse_speed_cap : velocity);
 			}
 
 			log_state(velocity, cur_prog_state.state.steering);
