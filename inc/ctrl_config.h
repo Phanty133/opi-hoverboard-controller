@@ -80,6 +80,8 @@ typedef struct {
 	int brake_threshold;
 
 	int reverse_speed_cap;
+
+	float throttle_boost_mult;
 } ControllerConfig;
 
 /// @brief Loads and parses config file
