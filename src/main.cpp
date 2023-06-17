@@ -139,7 +139,7 @@ void fork_send_cmd(ControllerConfig config) {
 				velocity *= config.throttle_boost_mult;
 			}
 
-			log_state(velocity, cur_prog_state.state.steering);
+			if (config.debug) log_state(velocity, cur_prog_state.state.steering);
 			motor_send_command(motor_fd, cur_prog_state.state.steering, velocity);
 
 			refresh_start = get_cur_millis();

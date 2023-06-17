@@ -82,6 +82,8 @@ typedef struct {
 	int reverse_speed_cap;
 
 	float throttle_boost_mult;
+
+	bool debug;
 } ControllerConfig;
 
 /// @brief Loads and parses config file
