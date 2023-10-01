@@ -7,6 +7,7 @@
 #include "steering.h"
 #include "motor.h"
 #include "logger.h"
+#include <stdlib.h>
 
 typedef enum {
 	HOLD,
@@ -89,6 +90,7 @@ void fork_input_read(ControllerConfig config) {
 				if (cur_prog_state.state.throttle == 0 && cur_prog_state.state.brake == 0) {
 					cur_prog_state.input_init_state = DONE;
 					printf("Initialization done!\n");
+					system("python3 /home/car/opi-hoverboard-controller/drivebuzz.py");
 				}
 			}
 		}
@@ -153,6 +155,8 @@ int main() {
 	
 	Motor_Feedback feedback;
 	// init_state(&state);
+
+	system("python3 /home/car/opi-hoverboard-controller/initbuzz.py");
 
 	std::thread inputThread(fork_input_read, config);
 	std::thread cmdThread(fork_send_cmd, config);
