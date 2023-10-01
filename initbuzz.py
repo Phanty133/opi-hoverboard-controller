@@ -1,3 +1,5 @@
+import time
+
 GPIO_PATH = "/sys/class/gpio/gpio13"
 
 def write_gpio(val: int):
@@ -6,12 +8,12 @@ def write_gpio(val: int):
 
 def beep(time_ms: int):
 	write_gpio(1)
-	sleep(time_ms)
+	time.sleep(time_ms / 1000)
 	write_gpio(0)	
 
 def main():
 	beep(100)
-	sleep(100)
+	time.sleep(0.1)
 	beep(100)
 
 if __name__ == "__main__":
